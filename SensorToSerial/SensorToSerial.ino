@@ -1,5 +1,5 @@
 #include <SoftwareSerial.h>
-SoftwareSerial sensorSerial(3, 4); //4 NOT USED
+SoftwareSerial sensorSerial(5, 4); //4 NOT USED
 
 // Reads from the sensor and prints on the serial monitor the latest value
 uint8_t serialRxBuf[255];
