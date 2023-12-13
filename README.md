@@ -1,79 +1,37 @@
 # IKEA VINDRIKTNING
 
-Questo repository raccoglie informazioni riguardante le possibile modifiche effettuabili all'**IKEA VINDRIKTNING** sensore di qualità dell'aria dotato del **PM1006** capace di misurare la concentrazione di PM2.5. È possibile collegare al sensore un sbc o microcontrollore per estenderne le funzionalità. Qua sotto è descritta una possibile implementazione usando arduino/esp8266 e simili.
+In questo repository raccolgo codici e risorse riguardanti la modifica dell'**IKEA VINDRIKTNING**, sensore di qualità dell'aria economico capace di misurare la concentrazione di PM 2.5 . Il sensore mostra la qualità dell'aria tramite 3 led posti sulla parte frontale. Tuttavia manca qualsiasi tipo di funzionalità wifi, quindi di per se è abbastanza inutile.
 
-## Implementazione
+Tuttavia essendo basato sul sensore **PM1006** è possibile tramite una semplice modifica hardware estrarre i dati e potenziare le funzionalità del prodotto. Questa modifica è ampiamente documentata, alcune risorse sono disponibili alla fine di questo README.
 
-Il sensore comunica tramite UART a 9600 boud, per utilizzarlo basta inizializzare la connessione in questo modo:
+Maggiori informazioni sul funzionamento della modifica sono disponibili nel file `README.old.md` in questa repository.
 
-```c
-#include <SoftwareSerial.h>
-SoftwareSerial sensorSerial(PIN_UART_RX, PIN_UART_TX);
-sensorSerial.begin(9600);
-```
+Il codice di questo repository è stato scritto e testato per funzionare sull'[az-delivery D1 mini](https://www.az-delivery.de/it/products/d1-mini), board basata su esp8266 dotata di wifi, alimentabile a 5V e di piccole dimensioni, in modo da poter essere collocata all'interno del case del dispositivo.
 
-> Attenzione! Il pin RX deve supportare gli interrupts ([leggi qua](https://docs.arduino.cc/learn/built-in-libraries/software-serial#limitations-of-this-library))
+### SensorToSerial
 
-Il messaggio è lungo 64 byte ed ha un checksum calcolato in questo modo:
+Nella cartella **sensorToSerial** è presente il file `sensorToSerial.ino` uno sketch che una volta compilato e caricato si occupa di stampare sul monitor seriale i dati rilevati dal sensore.
 
-```c
-bool isValidChecksum() { //calcola il checksum e ritorna 1 se valido
-        uint8_t checksum = 0;
+### webServer
 
-        for (uint8_t i = 0; i < 20; i++) {
-            checksum += serialRxBuf[i];
-        }
+Nella cartella **webServer** è presente il file `webServer.ino` sketch che presenta un rudimentale web server capace di presentare alcune basiche informazioni, come l'ultimo valore rilevato, il valore massimo ed il numero di rilevazioni. Lo sketch al momento è configurato per connettersi al WiFi tramite IP statico, ma è possibile disabilitare questa opzione facilmente eliminando alcune linee di codice.
 
-        if (checksum != 0) {
-            Serial.printf("Received message with invalid checksum. Expected: 0. Actual: %d\n", checksum);
-        }
+### toMySql
 
-        return checksum == 0;
-    }
-```
+All'interno della cartella **toMySql** sono presenti due sottocartelle.
 
-In pratica la somma di tutti i byte deve essere 0. ATTENZIONE `uint8_t` è unsigned, questo vuol dire che per essere zero overflowa:
+- **webClient** contiene lo sketch per permettere all'esp 8266 di contattare il server remoto
+- **server** server contiene il server scritto in **node.js** che si occupa di gestire le richieste e scrivere il tutto su un database mysql
 
-```c
-#include <stdio.h>
-#include <stdint.h>
+Nella cartella server è presente anche un **DOCKERFILE** per facilitare il deployment tramite docker. Un'applicazione interessante è quella di raccogliere i dati nel database e visualizzarli usando **grafana**, qua sotto è presente uno screen shoot della mia dashboard. Nella cartella toMySql è presente anche il file `grafana.json` che è la configurazione della dashboard appena descritta.
 
-int main(int argc, char const *argv[])
-{
-    uint8_t checksum = 255;
-    checksum++;
-    printf("%d \n", checksum);
-    return 0;
-}
-```
+## Sviluppi futuri:
 
-output: `0`
-
-Per verificare che il messaggio sia valido è necessario verificare l'header che è sempre `16 11 0B`
-
-```c
-bool headerValid = serialRxBuf[0] == 0x16 && serialRxBuf[1] == 0x11 && serialRxBuf[2] == 0x0B;
-```
-
-Si può estrarre la concentrazione di PM 2.5 in questo mondo:
-`B[5]*256 + B[6]` Dove `B` è il buffer di byte ricevuti. Implementazione:
-
-```c
-const uint16_t pm25 = (serialRxBuf[5] << 8) | serialRxBuf[6];
-```
-
-## NOTE
-
-1. Se si usa il sensore staccato dal MCU originale di IKEA bisogna mandare questo messaggio via UART entro 5 secondi dal boot: `11 02 0B 01 E1`, altrimenti il sensore entra in modalità PWM.
-2. Il funzionamento della modalità PWM è documentato su [questo](http://innovaertech.com/wp-content/uploads/2022/05/PM1006.pdf) datasheet che è dedicato alla versione K del sensore, sarebbe da sperimentare per vedere se effettivamente le istruzioni sono valide anche per la versione non k
-3. Sarebbe interessante testare se le informazioni riguardanti PM5 PM10 sono presenti anche nel payload della versione non k del sensore ([fonte](http://innovaertech.com/wp-content/uploads/2022/05/PM1006.pdf))
-4. Sulla board IKEA è presente anche un sensore di luce che è possibile utilizzare ([fonte1](https://www.youtube.com/watch?v=YmqtMTO5NVc) [fonte2](https://github.com/3ative/IKEA-Air-Quality-Sensor))
-5. Potrebbe essere interessante integrare il tutto con il sensore ENS160 + AHT21 per avere anche i valori di CO2, VOC, temperature ed umidità (possibilità di correggere le rilevazioni di PM1006?)
-6. Possibilità di utilizzare i LED già disponibili (?)
+- aggiungere altri sensori come ENS160 + AHT21 per raccogliere ulteriori dati
 
 ## Fonti:
 
-- Repo dal quale ho preso parte del codice mostrato in questo README: [esp8266-vindriktning-particle-sensor](https://github.com/Hypfer/esp8266-vindriktning-particle-sensor)
+- [esp8266-vindriktning-particle-sensor (github)](https://github.com/Hypfer/esp8266-vindriktning-particle-sensor)
 - [IKEA-Air-Quality-Sensor](https://github.com/3ative/IKEA-Air-Quality-Sensor/tree/main)
 - [ESPHOME PM1006](https://esphome.io/components/sensor/pm1006.html?highlight=pm1006)
 - [DATASHEET PM1006](https://cdn-learn.adafruit.com/assets/assets/000/122/217/original/PM1006_LED_PARTICLE_SENSOR_MODULE_SPECIFICATIONS-1.pdf?1688148991)

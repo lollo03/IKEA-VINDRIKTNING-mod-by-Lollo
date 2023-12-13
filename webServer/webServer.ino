@@ -3,18 +3,20 @@
 #include <ESP8266WebServer.h>
 
 // WIFI settings
-const char* ssid = "";
-const char* password = "";
+const char* ssid = ""; //Insert SSID
+const char* password = ""; //Insert wifi password
 
 ESP8266WebServer server(80);
 
 SoftwareSerial sensorSerial(2, 4); //4 NOT USED
 
-IPAddress local_IP(192, 168, 100, 69);
+IPAddress local_IP(192, 168, 100, 69); // Delete these lines for DHCP
 IPAddress gateway(192, 168, 100, 1);
 IPAddress subnet(255, 255, 255, 0);
 IPAddress primaryDNS(1, 1, 1, 1);  
+// Stop deleting here
 
+// Global vars
 uint8_t serialRxBuf[255];
 uint8_t rxBufIdx = 0;
 uint8_t temp = 0;
@@ -24,9 +26,11 @@ uint16_t countReader = 0;
 
 void setup() {
   // Configures static IP address
-  if (!WiFi.config(local_IP, gateway, subnet, primaryDNS)) {
+  if (!WiFi.config(local_IP, gateway, subnet, primaryDNS)) { // Delete these lines for DHCP
     Serial.println("STA Failed to configure");
   }
+  // Stop deleting here
+
 
   WiFi.begin(ssid, password);
   sensorSerial.begin(9600);

@@ -5,20 +5,21 @@
 #include "TickTwo.h"
 
 // WIFI settings
-const char* ssid = "";
-const char* password = "";
-IPAddress local_IP(192, 168, 100, 69);
+const char* ssid = ""; // SSID 
+const char* password = ""; // WIFI PASSWORD
+IPAddress local_IP(192, 168, 100, 69); //DELETE for DHCP
 IPAddress gateway(192, 168, 100, 1);
 IPAddress subnet(255, 255, 255, 0);
 IPAddress primaryDNS(1, 1, 1, 1);  
+// STOP DELETING here
 
 // PIN SETTINGS
 SoftwareSerial sensorSerial(2, 4); //4 NOT USED
 
 // Remote server settings
-const char* serverName = "http://192.168.100.88/new";
-const char* accessToken = "";
-const char* deviceID = "1";
+const char* serverName = "http://example.com/new";
+const char* accessToken = ""; //max 64 chars
+const char* deviceID = "";
 
 // Global vars
 uint8_t serialRxBuf[255];
@@ -33,7 +34,7 @@ void senData();
 // Timer
 TickTwo timer(senData, 1000*60); // Every minute...
 
-void senData() { //perdiocally sends post request
+void senData() { //periodically sends post request
   Serial.println("Trying to send data...");
   if(WiFi.status()!= WL_CONNECTED){
     return; // exit if wifi is not connected
@@ -44,7 +45,7 @@ void senData() { //perdiocally sends post request
   http.addHeader("Accept-Encoding", "gzip, deflate, br");
   http.addHeader("token", accessToken);
   if(sumCounter == 0){ //if there isn't new data exit the fuction
-    Serial.println("No data avaible... skipping");
+    Serial.println("No data available... skipping");
     return;
   }
   float temp = sum/sumCounter;
@@ -60,9 +61,10 @@ void senData() { //perdiocally sends post request
 
 void setup() {
   // Configures static IP address
-  if (!WiFi.config(local_IP, gateway, subnet, primaryDNS)) {
+  if (!WiFi.config(local_IP, gateway, subnet, primaryDNS)) { //Delete here for DHCP
     Serial.println("STA Failed to configure");
   }
+  // STOP deleting
 
   WiFi.begin(ssid, password);
   sensorSerial.begin(9600);
