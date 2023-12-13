@@ -18,6 +18,8 @@ app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
 app.use(cors())
 
 const port = 80
+const regOnlyNumbers = /^\d+(\.\d+)*$$/
+const regNumbersAndLetters = /^[a-zA-Z0-9]*$/
 
 const pool = mariadb.createPool({
     host: process.env.mariadb_host,
@@ -47,6 +49,11 @@ async function checkToken(token) {
 app.post('/new', async (req, res) => {
     var ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress
     console.log(`Ricevuto /new da ${ip}`)
+    if (req.headers["token"] && !req.headers["token"].match(regNumbersAndLetters)) {
+        console.log("La richiesta non ha passato i controlli regex!")
+        res.sendStatus(401)
+        return
+    }
     if (!await checkToken(req.headers["token"]) || !req.headers["token"]) { //il token non è nel db
         console.log("Access token non valido!")
         res.sendStatus(401)
@@ -55,6 +62,11 @@ app.post('/new', async (req, res) => {
     console.log("Token riconosciuto, scrivo nel database")
     if (!req.body["PM25"] || !req.body["deviceID"]) {
         console.log("La richiesta non ha i parametri body necessari!")
+        res.sendStatus(400)
+        return
+    }
+    if (!req.body["PM25"].match(regOnlyNumbers) || !req.body["deviceID"].match(regOnlyNumbers)) {
+        console.log("La richiesta non ha passato i controlli regex!")
         res.sendStatus(400)
         return
     }
