@@ -40,6 +40,8 @@ void senData() { //perdiocally sends post request
   }
   http.begin(client, serverName);
   http.addHeader("Content-Type", "application/x-www-form-urlencoded");
+  http.addHeader("Accept", "*/*");
+  http.addHeader("Accept-Encoding", "gzip, deflate, br");
   http.addHeader("token", accessToken);
   if(sumCounter == 0){ //if there isn't new data exit the fuction
     Serial.println("No data avaible... skipping");
@@ -77,7 +79,6 @@ void setup() {
   Serial.println(WiFi.localIP());
 
   timer.start();
-  senData();
 }
 
 void loop() {
