@@ -1,4 +1,4 @@
-FROM node:18
+FROM node:21
 WORKDIR /usr/src/
 # Install app dependencies
 # A wildcard is used to ensure both package.json AND package-lock.json are copied
