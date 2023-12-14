@@ -78,6 +78,12 @@ app.post('/new', async (req, res) => {
         res.sendStatus(500)
         return
     }
+    try {
+        await conn.query("UPDATE `devices` SET `lastPing` = now() WHERE `deviceID` = '" + req.body["deviceID"] + "' LIMIT 1;")
+    } catch (e) {
+        console.log("Errore nell'aggiornamento dell'ultimo ping")
+        console.log(e)
+    }
     console.log('Scrittura completata...')
     res.sendStatus(200)
 })
