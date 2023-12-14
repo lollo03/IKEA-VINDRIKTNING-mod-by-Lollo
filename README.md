@@ -25,6 +25,8 @@ All'interno della cartella **toMySql** sono presenti due sottocartelle.
 
 Nella cartella server è presente anche un **DOCKERFILE** per facilitare il deployment tramite docker. Un'applicazione interessante è quella di raccogliere i dati nel database e visualizzarli usando **grafana**, qua sotto è presente uno screen shoot della mia dashboard. Nella cartella toMySql è presente anche il file `grafana.json` che è la configurazione della dashboard appena descritta.
 
+![Screen shoot](https://raw.githubusercontent.com/lollo03/IKEA-VINDRIKTNING-mod-by-Lollo/main/docs/grafanaDashboard.png)
+
 ## Sviluppi futuri:
 
 - aggiungere altri sensori come ENS160 + AHT21 per raccogliere ulteriori dati
