@@ -65,30 +65,30 @@ app.post('/new', async (req, res) => {
         res.sendStatus(400)
         return
     }
-    if (!req.body["PM25"].match(regOnlyNumbers) || !req.body["deviceID"].match(regOnlyNumbers)) {
+    if (!req.body["deviceID"].match(regOnlyNumbers)) {
         console.log("La richiesta non ha passato i controlli regex!")
         res.sendStatus(400)
         return
     }
     conn = pool
     try { //un bel catch-all
-        if (req.body["PM25"]) { //ha pm 2.5
+        if (req.body["PM25"].match(regOnlyNumbers)) { //ha pm 2.5
             await conn.query(`INSERT INTO data (dateTime, PM25, deviceID) VALUE(NOW(), ${req.body["PM25"]}, ${req.body["deviceID"]});`)
             console.log("Scrivo pm 2.5")
         }
-        if (req.body["eCO2"]) {
+        if (req.body["eCO2"].match(regOnlyNumbers)) {
             await conn.query(`INSERT INTO data (dateTime, eCO2, deviceID) VALUE(NOW(), ${req.body["eCO2"]}, ${req.body["deviceID"]});`)
             console.log("Scrivo eCO2")
         }
-        if (req.body["TVOC"]) {
+        if (req.body["TVOC"].match(regOnlyNumbers)) {
             await conn.query(`INSERT INTO data (dateTime, TVOC, deviceID) VALUE(NOW(), ${req.body["TVOC"]}, ${req.body["deviceID"]});`)
             console.log("Scrivo TVOC")
         }
-        if (req.body["temperature"]) {
+        if (req.body["temperature"].match(regOnlyNumbers)) {
             await conn.query(`INSERT INTO data (dateTime, temperature, deviceID) VALUE(NOW(), ${req.body["temperature"]}, ${req.body["deviceID"]});`)
             console.log("Scrivo temperatura")
         }
-        if (req.body["humidity"]) {
+        if (req.body["humidity"].match(regOnlyNumbers)) {
             await conn.query(`INSERT INTO data (dateTime, humidity, deviceID) VALUE(NOW(), ${req.body["humidity"]}, ${req.body["deviceID"]});`)
             console.log("Scrivo umidità")
         }
