@@ -20,7 +20,9 @@ CREATE TABLE `data` (
   `dateTime` datetime NOT NULL DEFAULT '0000-00-00 00:00:00' ON UPDATE current_timestamp(),
   `PM25` float DEFAULT NULL,
   `eCO2` float DEFAULT NULL,
-  `VOC` float DEFAULT NULL,
+  `humidity` float DEFAULT NULL,
+  `temperature` float DEFAULT NULL,
+  `TVOC` float DEFAULT NULL,
   `deviceID` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -32,4 +34,6 @@ CREATE TABLE `devices` (
   `lastPing` datetime NOT NULL,
   `token` varchar(64) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
 

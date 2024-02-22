@@ -80,9 +80,17 @@ app.post('/new', async (req, res) => {
             await conn.query(`INSERT INTO data (dateTime, eCO2, deviceID) VALUE(NOW(), ${req.body["eCO2"]}, ${req.body["deviceID"]});`)
             console.log("Scrivo eCO2")
         }
-        if (req.body["VOC"]) {
-            await conn.query(`INSERT INTO data (dateTime, VOC, deviceID) VALUE(NOW(), ${req.body["VOC"]}, ${req.body["deviceID"]});`)
-            console.log("Scrivo VOC")
+        if (req.body["TVOC"]) {
+            await conn.query(`INSERT INTO data (dateTime, TVOC, deviceID) VALUE(NOW(), ${req.body["TVOC"]}, ${req.body["deviceID"]});`)
+            console.log("Scrivo TVOC")
+        }
+        if (req.body["temperature"]) {
+            await conn.query(`INSERT INTO data (dateTime, temperature, deviceID) VALUE(NOW(), ${req.body["temperature"]}, ${req.body["deviceID"]});`)
+            console.log("Scrivo temperatura")
+        }
+        if (req.body["humidity"]) {
+            await conn.query(`INSERT INTO data (dateTime, humidity, deviceID) VALUE(NOW(), ${req.body["humidity"]}, ${req.body["deviceID"]});`)
+            console.log("Scrivo umidità")
         }
     } catch (e) {
         console.log(e);
