@@ -60,7 +60,7 @@ app.post('/new', async (req, res) => {
         return
     }
     console.log("Token riconosciuto, scrivo nel database")
-    if (!req.body["PM25"] || !req.body["deviceID"]) {
+    if (!req.body["deviceID"]) {
         console.log("La richiesta non ha i parametri body necessari!")
         res.sendStatus(400)
         return
@@ -72,7 +72,18 @@ app.post('/new', async (req, res) => {
     }
     conn = pool
     try { //un bel catch-all
-        await conn.query(`INSERT INTO data (dateTime, PM25, deviceID) VALUE(NOW(), ${req.body["PM25"]}, ${req.body["deviceID"]});`)
+        if (req.body["PM25"]) { //ha pm 2.5
+            await conn.query(`INSERT INTO data (dateTime, PM25, deviceID) VALUE(NOW(), ${req.body["PM25"]}, ${req.body["deviceID"]});`)
+            console.log("Scrivo pm 2.5")
+        }
+        if (req.body["eCO2"]) {
+            await conn.query(`INSERT INTO data (dateTime, eCO2, deviceID) VALUE(NOW(), ${req.body["eCO2"]}, ${req.body["deviceID"]});`)
+            console.log("Scrivo eCO2")
+        }
+        if (req.body["VOC"]) {
+            await conn.query(`INSERT INTO data (dateTime, VOC, deviceID) VALUE(NOW(), ${req.body["VOC"]}, ${req.body["deviceID"]});`)
+            console.log("Scrivo VOC")
+        }
     } catch (e) {
         console.log(e);
         res.sendStatus(500)

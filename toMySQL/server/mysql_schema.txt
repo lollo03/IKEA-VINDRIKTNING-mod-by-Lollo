@@ -1,5 +1,3 @@
--- Adminer 4.8.1 MySQL 11.1.3-MariaDB-1:11.1.3+maria~ubu2204 dump
-
 SET NAMES utf8;
 SET time_zone = '+00:00';
 SET foreign_key_checks = 0;
@@ -11,10 +9,18 @@ DROP DATABASE IF EXISTS `airquality`;
 CREATE DATABASE `airquality` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci */;
 USE `airquality`;
 
+DELIMITER ;;
+
+CREATE EVENT `elimina vecchi record qualità aria` ON SCHEDULE EVERY 1 MONTH STARTS '2023-12-13 20:08:01' ON COMPLETION NOT PRESERVE ENABLE DO delete from data where datetime < now() - interval 30 DAY;;
+
+DELIMITER ;
+
 DROP TABLE IF EXISTS `data`;
 CREATE TABLE `data` (
   `dateTime` datetime NOT NULL DEFAULT '0000-00-00 00:00:00' ON UPDATE current_timestamp(),
-  `PM25` float(11) NOT NULL,
+  `PM25` float DEFAULT NULL,
+  `eCO2` float DEFAULT NULL,
+  `VOC` float DEFAULT NULL,
   `deviceID` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -27,5 +33,3 @@ CREATE TABLE `devices` (
   `token` varchar(64) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-
--- 2023-12-13 14:26:36
