@@ -1,5 +1,7 @@
 # IKEA VINDRIKTNING
 
+![Image](https://raw.githubusercontent.com/lollo03/IKEA-VINDRIKTNING-mod-by-Lollo/main/docs/sensor.jpeg)
+
 Within this repository, I gather codes and resources related to modifying the **IKEA VINDRIKTNING**, an affordable air quality sensor capable of measuring PM 2.5 concentration. The sensor indicates air quality through 3 LEDs on the front panel. However, it lacks any Wi-Fi functionality, making it rather limited on its own.
 
 Nevertheless, since it is based on the **PM1006** sensor, it is possible, through a simple hardware modification, to extract data and enhance the product's capabilities. This modification is extensively documented, and some resources are available at the end of this README.
