@@ -27,6 +27,24 @@ Within the **toMySql** folder, two subfolders exist:
 
 The server folder also includes a **DOCKERFILE** to facilitate deployment via Docker. An interesting application is to collect data in the database and visualize it using **Grafana**. Below is a screenshot of my dashboard. The toMySql folder also contains the `grafana.json` file, which is the configuration of the aforementioned dashboard.
 
+The node.js server is also published as a [docker image](https://hub.docker.com/r/lollo03/ikea-vindriktning-server), if you want to skip the build process. This is an example of deployment using `docker-compose` and maria db
+```yaml
+name: airquality
+services:
+    airquality-backend:
+        restart: unless-stopped
+        ports:
+            - 86:80
+        image: lollo03/ikea-vindriktning-server
+        environment:
+         - mariadb_host=DATABASE
+         - mariadb_user=user
+         - mariadb_password=password
+         - mariadb_database=airquality
+```
+
+Before deploying remember to create the database and the table structure using the `mysql_schema.txt` file
+
 ![Screenshot](https://raw.githubusercontent.com/lollo03/IKEA-VINDRIKTNING-mod-by-Lollo/main/docs/grafanaDashboard.png)
 
 ## Future Developments:
